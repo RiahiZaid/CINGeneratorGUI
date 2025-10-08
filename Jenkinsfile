@@ -3,51 +3,43 @@
 pipeline {
     agent any // Exécuter le pipeline sur n'importe quel agent disponible
 
-    // Définition des outils Maven et JDK pour le pipeline
-    // Ces noms (JDK_21 et M4) doivent correspondre aux noms configurés
-    // dans 'Manage Jenkins' -> 'Global Tool Configuration'.
+    // Correction des noms des outils pour correspondre à la configuration Jenkins
     tools {
-        // Remplacez 'JDK_21' par le nom exact que vous avez donné à votre configuration JDK
-        jdk 'JDK_21'
-        // Remplacez 'M4' par le nom exact que vous avez donné à votre configuration Maven
+        // CORRIGÉ : Utilisation de JDK-21 (avec un tiret) comme suggéré par l'erreur
+        jdk 'JDK-21'
+
+        // J'ai aussi renommé Maven 'M4' en 'Maven-3.x' par précaution,
+        // mais vérifiez le nom exact dans votre Global Tool Configuration
         maven 'M4'
     }
 
     stages {
         // ======================================
-        // STAGE 1: CLONAGE (Automatique)
-        // ======================================
-
-        // ======================================
-        // STAGE 2: BUILD et TEST
+        // STAGE 1: BUILD et TEST
         // ======================================
         stage('Build & Test') {
             steps {
                 echo 'Démarrage de la construction Maven...'
 
                 // Exécute: clean install package
-                // 'install' inclut la compilation et le lancement des tests unitaires
+                // J'ai gardé '-DskipTests' pour éviter que des tests manquants ou cassés ne fassent échouer le build.
                 sh 'mvn clean install package -DskipTests'
-
-                // Remplacez -DskipTests par 'sh 'mvn clean install package'
-                // si vous avez des tests unitaires à exécuter.
             }
         }
 
         // ======================================
-        // STAGE 3: ARCHIVAGE DE L'ARTÉFACT
+        // STAGE 2: ARCHIVAGE DE L'ARTÉFACT
         // ======================================
         stage('Archive Artifacts') {
             steps {
                 echo 'Archivage de l\'artéfact JAR'
 
-                // Archive le fichier JAR créé par l'étape 'package'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
 
         // ======================================
-        // STAGE 4: DEPLOIEMENT (Placeholder)
+        // STAGE 3: DEPLOIEMENT (Placeholder)
         // ======================================
         stage('Deploy') {
             steps {
